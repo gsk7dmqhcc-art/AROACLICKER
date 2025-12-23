@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Infinite - Global Core</title>
+    <title>Aura Infinite - Architect Overlord</title>
     <style>
         :root {
             --bg: #010103; --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08);
-            --accent: #00ffaa; --prestige: #ff00ea; --dev: #ffcc00; --alert: #00d4ff; --online: #22ff22; --offline: #ff2222;
+            --accent: #00ffaa; --prestige: #ff00ea; --dev: #ffcc00; --alert: #00d4ff; --online: #22ff22;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; font-family: 'Inter', sans-serif; }
@@ -17,57 +17,54 @@
         /* Announcement Bar */
         #announcement-bar {
             position: fixed; top: 0; left: 0; width: 100%; height: 35px;
-            background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--border);
+            background: rgba(0,0,0,0.9); border-bottom: 1px solid var(--border);
             z-index: 1000; display: flex; align-items: center; padding: 0 20px;
         }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 10px; box-shadow: 0 0 10px currentColor; }
-        .online { color: var(--online); background: var(--online); }
-        .offline { color: var(--offline); background: var(--offline); }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; box-shadow: 0 0 10px var(--online); background: var(--online); }
+        .player-count { font-size: 10px; color: var(--online); margin-right: 20px; font-weight: bold; font-family: monospace; }
 
         .ticker-wrap { flex-grow: 1; overflow: hidden; white-space: nowrap; }
-        .ticker-text { display: inline-block; animation: scroll 25s linear infinite; color: var(--alert); font-size: 11px; letter-spacing: 1px; font-weight: bold; }
+        .ticker-text { display: inline-block; animation: scroll 30s linear infinite; color: var(--alert); font-size: 11px; letter-spacing: 1px; font-weight: bold; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
         /* Panels */
-        .panel { background: var(--glass); backdrop-filter: blur(30px); border: 1px solid var(--border); padding: 20px; margin: 10px; margin-top: 50px; border-radius: 24px; overflow-y: auto; display: flex; flex-direction: column; }
+        .panel { background: var(--glass); backdrop-filter: blur(30px); border: 1px solid var(--border); padding: 20px; margin: 10px; margin-top: 50px; border-radius: 24px; overflow-y: auto; }
         .main-view { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        #node { width: 220px; height: 220px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.01); cursor: pointer; transition: 0.1s; position: relative; box-shadow: 0 0 50px rgba(0, 255, 170, 0.05); }
+        #node { width: 220px; height: 220px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.01); cursor: pointer; transition: 0.1s; box-shadow: 0 0 50px rgba(0, 255, 170, 0.05); }
         #node:active { transform: scale(0.94); }
 
-        /* Dev Menu */
-        #dev-menu { display: none; position: fixed; inset: 0; background: #000; z-index: 2000; padding: 40px; overflow-y: auto; }
-        .dev-card { background: #080808; border: 1px solid #222; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
-        .dev-input { background: #111; border: 1px solid #333; color: var(--dev); padding: 12px; width: 100%; border-radius: 8px; margin: 10px 0; font-family: monospace; }
+        /* MEGA DEV MENU */
+        #dev-menu { display: none; position: fixed; inset: 0; background: #000; z-index: 2000; padding: 30px; overflow-y: auto; }
+        .dev-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .dev-btn { background: #111; border: 1px solid #333; color: var(--dev); padding: 10px; border-radius: 8px; font-size: 10px; cursor: pointer; transition: 0.2s; text-align: center; }
+        .dev-btn:hover { background: var(--dev); color: #000; border-color: #fff; }
+        .dev-header { color: var(--alert); font-size: 12px; font-weight: bold; margin: 15px 0 10px 0; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .dev-input { background: #111; border: 1px solid #333; color: var(--dev); padding: 12px; width: 100%; border-radius: 8px; margin: 10px 0; }
         
-        .tab-btn { background: var(--glass); border: 1px solid var(--border); color: #888; padding: 10px; border-radius: 12px; cursor: pointer; flex: 1; margin-bottom: 10px; }
-        .active-tab { background: var(--accent); color: black; font-weight: bold; }
         .upgrade-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 14px; margin-bottom: 8px; border-radius: 16px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="announcement-bar">
-        <div id="srv-dot" class="status-dot online"></div>
+        <div class="status-dot"></div>
+        <div class="player-count">LIVE: <span id="p-count">1,402</span></div>
         <div class="ticker-wrap">
-            <div id="ticker" class="ticker-text">CONNECTING TO AURA_NET... HANDSHAKE COMPLETE... WELCOME CARSON KIRKPATRICK...</div>
+            <div id="ticker" class="ticker-text">CONNECTING TO AURA_NET... WELCOME CARSON KIRKPATRICK...</div>
         </div>
     </div>
 
     <div class="panel">
-        <button class="tab-btn active-tab" id="stats-tab-btn">CORE DATA</button>
-        <div id="stats-tab">
-            <div style="font-size: 10px; opacity: 0.5;">ENERGY</div>
-            <div style="font-size: 32px; font-weight: 900; color: var(--accent);" id="energy-display">0</div>
-            <div style="color: #666; font-size: 14px;">+ <span id="dps-display">0</span> /s</div>
-            <hr style="border:0; border-top:1px solid #222; margin: 20px 0;">
-            <div style="font-size: 12px; color: var(--dev);">Architect: Carson Kirkpatrick</div>
-            <div style="font-size: 10px; opacity: 0.3; margin-top: 5px;">Server: Global-West-01</div>
-        </div>
+        <div style="font-size: 10px; opacity: 0.5;">ENERGY</div>
+        <div style="font-size: 32px; font-weight: 900; color: var(--accent);" id="energy-display">0</div>
+        <div style="color: #666; font-size: 14px;">+ <span id="dps-display">0</span> /s</div>
+        <hr style="border:0; border-top:1px solid #222; margin: 20px 0;">
+        <div style="font-size: 12px; color: var(--dev);">Architect: Carson Kirkpatrick</div>
     </div>
 
     <div class="main-view">
         <div id="node"></div>
-        <div onclick="openDev()" style="margin-top:20px; font-size:10px; opacity:0.1; cursor:pointer;">[NETWORK_ROOT_v6]</div>
+        <div onclick="openDev()" style="margin-top:20px; font-size:10px; opacity:0.1; cursor:pointer;">[NETWORK_ROOT_v7]</div>
     </div>
 
     <div class="panel">
@@ -75,32 +72,53 @@
     </div>
 
     <div id="dev-menu">
-        <h2 style="color:var(--dev)">SATELLITE COMMAND CENTER</h2>
-        
-        <div class="dev-card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:#888; font-size:12px;">SERVER STATUS: <span style="color:var(--online)">CONNECTED</span></span>
-                <span id="ping-display" style="color:var(--dev); font-size:12px;">PING: 24ms</span>
-            </div>
+        <div style="display:flex; justify-content:space-between;">
+            <h2 style="color:var(--dev); margin:0;">ARCHITECT COMMAND CENTER</h2>
+            <button onclick="document.getElementById('dev-menu').style.display='none'" style="background:red; color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer;">EXIT</button>
         </div>
 
-        <div class="dev-card">
-            <label style="color:var(--alert); font-size:12px; font-weight:bold;">GLOBAL BROADCAST</label>
-            <input type="text" id="broadcast-msg" class="dev-input" placeholder="Alert all connected players...">
-            <button onclick="sendBroadcast()" style="padding:12px; background:var(--alert); border:none; border-radius:8px; width:100%; font-weight:bold; cursor:pointer;">EMIT SIGNAL</button>
+        <div class="dev-header">GLOBAL NETWORK BROADCAST</div>
+        <input type="text" id="broadcast-msg" class="dev-input" placeholder="Update the live ticker for all players...">
+        <button onclick="sendBroadcast()" class="dev-btn" style="width:100%; background:var(--alert); color:black; font-weight:bold;">EMIT GLOBAL SIGNAL</button>
+
+        <div class="dev-header">RESOURCE INJECTION</div>
+        <div class="dev-grid">
+            <button class="dev-btn" onclick="state.data += 1e6">+1 Million</button>
+            <button class="dev-btn" onclick="state.data += 1e9">+1 Billion</button>
+            <button class="dev-btn" onclick="state.data += 1e12">+1 Trillion</button>
+            <button class="dev-btn" onclick="state.data += 1e15">+1 Quadrillion</button>
         </div>
 
-        <div class="dev-card">
-            <button onclick="state.data += 1e15; updateUI()" class="dev-input" style="cursor:pointer; border-color:var(--accent); color:var(--accent);">INJECT 1 QUADRILLION ENERGY</button>
-            <button onclick="document.getElementById('dev-menu').style.display='none'" style="width:100%; padding:10px; background:transparent; border:1px solid #444; color:#666; cursor:pointer; border-radius:8px;">CLOSE COMMAND</button>
+        <div class="dev-header">PRESTIGE & MULTIPLIERS</div>
+        <div class="dev-grid">
+            <button class="dev-btn" onclick="state.prestigeMult = 1">Reset Mult</button>
+            <button class="dev-btn" onclick="state.prestigeMult *= 2">Mult x2</button>
+            <button class="dev-btn" onclick="state.prestigeMult *= 10">Mult x10</button>
+            <button class="dev-btn" onclick="state.prestigeMult = 999999">Max Mult</button>
+        </div>
+
+        <div class="dev-header">VISUAL HACKS</div>
+        <div class="dev-grid">
+            <button class="dev-btn" onclick="document.body.style.filter='invert(1)'">Invert</button>
+            <button class="dev-btn" onclick="document.body.style.filter='hue-rotate(90deg)'">Hue Shift</button>
+            <button class="dev-btn" onclick="document.body.style.filter='none'">Normal</button>
+            <button class="dev-btn" onclick="node.style.borderRadius='0'">Square Core</button>
+        </div>
+
+        <div class="dev-header">TIME & SPEED</div>
+        <div class="dev-grid">
+            <button class="dev-btn" onclick="state.data += calculateDPS() * 3600">+1 Hour Progress</button>
+            <button class="dev-btn" onclick="state.data += calculateDPS() * 86400">+1 Day Progress</button>
+            <button class="dev-btn" onclick="fullWipe()">FACTORY RESET</button>
         </div>
     </div>
 
 <script>
     let state = {
         data: 0,
+        prestigeMult: 1,
         upgradeLevels: new Array(1000).fill(0),
-        broadcast: "System Online. Welcome, Architect Carson Kirkpatrick."
+        broadcast: "Welcome, Architect Carson Kirkpatrick. All systems online."
     };
 
     const upgrades = Array.from({length: 1000}, (_, i) => ({
@@ -111,12 +129,12 @@
 
     function handleInput(e) {
         if (e.cancelable) e.preventDefault();
-        state.data += 1 + (calculateDPS() * 0.05);
+        state.data += (1 + (calculateDPS() * 0.05)) * state.prestigeMult;
         updateUI();
     }
 
     function calculateDPS() {
-        return state.upgradeLevels.reduce((sum, lvl, i) => sum + (lvl * upgrades[i].dps), 0);
+        return state.upgradeLevels.reduce((sum, lvl, i) => sum + (lvl * upgrades[i].dps), 0) * state.prestigeMult;
     }
 
     function updateUI() {
@@ -146,25 +164,25 @@
     function sendBroadcast() {
         const msg = document.getElementById('broadcast-msg').value;
         if(msg) {
-            state.broadcast = "GLOBAL ALERT: " + msg + " — (Dev: Carson)";
+            state.broadcast = "GLOBAL UPDATE: " + msg + " — (Dev: Carson)";
             updateUI();
-            alert("Signal Broadcasted to Global Ticker");
+            alert("Broadcast sent!");
         }
     }
 
-    // Ping Simulator
-    setInterval(() => {
-        if(document.getElementById('dev-menu').style.display === 'block') {
-            document.getElementById('ping-display').innerText = "PING: " + Math.floor(Math.random() * 20 + 15) + "ms";
-        }
-    }, 2000);
-
+    function fullWipe() { if(confirm("WIPE EVERYTHING?")) { localStorage.clear(); location.reload(); } }
+    
     function openDev() { if(prompt("ACCESS KEY:") === "2026") document.getElementById('dev-menu').style.display = 'block'; }
-    function save() { localStorage.setItem('aura_v6_save', JSON.stringify(state)); }
+    function save() { localStorage.setItem('aura_v7_save', JSON.stringify(state)); }
     function load() {
-        const s = localStorage.getItem('aura_v6_save');
+        const s = localStorage.getItem('aura_v7_save');
         if(s) state = JSON.parse(s);
     }
+
+    // Live Player Counter simulation
+    setInterval(() => {
+        document.getElementById('p-count').innerText = (1200 + Math.floor(Math.random()*400)).toLocaleString();
+    }, 5000);
 
     document.getElementById('node').addEventListener('mousedown', handleInput);
     document.getElementById('node').addEventListener('touchstart', handleInput, {passive:false});

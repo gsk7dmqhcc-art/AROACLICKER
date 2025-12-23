@@ -3,181 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aura Clicker: Ultra Dev</title>
+    <title>Aura Infinite - Global Core</title>
     <style>
         :root {
-            --bg: #050508;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-            --accent: #00ffaa;
-            --prestige: #ff00ea;
-            --dev: #ffcc00;
+            --bg: #010103; --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08);
+            --accent: #00ffaa; --prestige: #ff00ea; --dev: #ffcc00; --alert: #00d4ff; --online: #22ff22; --offline: #ff2222;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; outline: none; }
-        body { background-color: var(--bg); color: white; font-family: 'Courier New', monospace; margin: 0; display: grid; grid-template-columns: 320px 1fr 320px; height: 100vh; overflow: hidden; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: white; margin: 0; display: grid; grid-template-columns: 320px 1fr 320px; height: 100vh; overflow: hidden; background-image: radial-gradient(circle at 50% 50%, #0a0a15 0%, #010103 100%); }
+        @media (max-width: 1000px) { body { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; overflow-y: auto; } }
 
-        @media (max-width: 1000px) { body { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; overflow-y: auto; } .panel { height: auto; margin: 10px; } }
-
-        .panel { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--border); padding: 20px; margin: 10px; border-radius: 20px; position: relative; }
-        .main-view { display: flex; align-items: center; justify-content: center; position: relative; }
-        
-        /* The Core */
-        .core-wrapper { position: relative; width: 240px; height: 240px; display: flex; align-items: center; justify-content: center; }
-        #node { width: 200px; height: 200px; border-radius: 50%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 800; z-index: 5; transition: 0.1s; }
-        #node::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 230px; height: 230px; border-radius: 50%; background: linear-gradient(45deg, var(--prestige), #00d4ff, var(--accent), var(--dev)); background-size: 400% 400%; animation: rainbow-flow 8s linear infinite; filter: blur(35px); z-index: -1; opacity: 0.6; }
-        @keyframes rainbow-flow { 0% { background-position: 0% 50%; } 100% { background-position: 400% 50%; } }
-
-        /* Dev Menu - Scrollable */
-        #dev-menu {
-            display: none; background: #000; position: fixed; top: 0; right: 0; width: 350px; height: 100vh; 
-            padding: 20px; border-left: 2px solid var(--dev); z-index: 9999; overflow-y: auto; box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+        /* Announcement Bar */
+        #announcement-bar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 35px;
+            background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--border);
+            z-index: 1000; display: flex; align-items: center; padding: 0 20px;
         }
-        .dev-section { border-bottom: 1px solid #222; padding: 15px 0; }
-        .dev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-        .dev-btn { background: #111; border: 1px solid #333; color: var(--dev); padding: 5px; font-size: 10px; cursor: pointer; border-radius: 4px; }
-        .dev-btn:hover { background: var(--dev); color: #000; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 10px; box-shadow: 0 0 10px currentColor; }
+        .online { color: var(--online); background: var(--online); }
+        .offline { color: var(--offline); background: var(--offline); }
+
+        .ticker-wrap { flex-grow: 1; overflow: hidden; white-space: nowrap; }
+        .ticker-text { display: inline-block; animation: scroll 25s linear infinite; color: var(--alert); font-size: 11px; letter-spacing: 1px; font-weight: bold; }
+        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        /* Panels */
+        .panel { background: var(--glass); backdrop-filter: blur(30px); border: 1px solid var(--border); padding: 20px; margin: 10px; margin-top: 50px; border-radius: 24px; overflow-y: auto; display: flex; flex-direction: column; }
+        .main-view { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        #node { width: 220px; height: 220px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.01); cursor: pointer; transition: 0.1s; position: relative; box-shadow: 0 0 50px rgba(0, 255, 170, 0.05); }
+        #node:active { transform: scale(0.94); }
+
+        /* Dev Menu */
+        #dev-menu { display: none; position: fixed; inset: 0; background: #000; z-index: 2000; padding: 40px; overflow-y: auto; }
+        .dev-card { background: #080808; border: 1px solid #222; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
+        .dev-input { background: #111; border: 1px solid #333; color: var(--dev); padding: 12px; width: 100%; border-radius: 8px; margin: 10px 0; font-family: monospace; }
         
-        .upgrade-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px; margin-bottom: 8px; border-radius: 12px; cursor: pointer; }
-        .stat-val { font-size: 2rem; font-weight: 900; }
-        .label { font-size: 0.7rem; opacity: 0.5; letter-spacing: 1px; }
-        #dev-access { position: fixed; bottom: 5px; right: 5px; font-size: 8px; opacity: 0.1; cursor: pointer; }
+        .tab-btn { background: var(--glass); border: 1px solid var(--border); color: #888; padding: 10px; border-radius: 12px; cursor: pointer; flex: 1; margin-bottom: 10px; }
+        .active-tab { background: var(--accent); color: black; font-weight: bold; }
+        .upgrade-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 14px; margin-bottom: 8px; border-radius: 16px; cursor: pointer; }
     </style>
 </head>
 <body>
 
+    <div id="announcement-bar">
+        <div id="srv-dot" class="status-dot online"></div>
+        <div class="ticker-wrap">
+            <div id="ticker" class="ticker-text">CONNECTING TO AURA_NET... HANDSHAKE COMPLETE... WELCOME CARSON KIRKPATRICK...</div>
+        </div>
+    </div>
+
     <div class="panel">
-        <div class="label">ENERGY_RESERVES</div>
-        <div class="stat-val" id="data-display">0</div>
-        <div id="dps-display" style="color: var(--accent);">0 /s</div>
-        <div class="label">MULT: x<span id="mult-display">1</span></div>
+        <button class="tab-btn active-tab" id="stats-tab-btn">CORE DATA</button>
+        <div id="stats-tab">
+            <div style="font-size: 10px; opacity: 0.5;">ENERGY</div>
+            <div style="font-size: 32px; font-weight: 900; color: var(--accent);" id="energy-display">0</div>
+            <div style="color: #666; font-size: 14px;">+ <span id="dps-display">0</span> /s</div>
+            <hr style="border:0; border-top:1px solid #222; margin: 20px 0;">
+            <div style="font-size: 12px; color: var(--dev);">Architect: Carson Kirkpatrick</div>
+            <div style="font-size: 10px; opacity: 0.3; margin-top: 5px;">Server: Global-West-01</div>
+        </div>
     </div>
 
     <div class="main-view">
-        <div class="core-wrapper"><div id="node">CORE</div></div>
+        <div id="node"></div>
+        <div onclick="openDev()" style="margin-top:20px; font-size:10px; opacity:0.1; cursor:pointer;">[NETWORK_ROOT_v6]</div>
     </div>
 
     <div class="panel">
-        <div class="label">MODULES</div>
         <div id="shop-container"></div>
     </div>
 
-    <div id="dev-access" onclick="openDev()">[DECRYPT_SYS]</div>
-
     <div id="dev-menu">
-        <h2 style="color:var(--dev)">ROOT@AURA_OS:~$</h2>
+        <h2 style="color:var(--dev)">SATELLITE COMMAND CENTER</h2>
         
-        <div class="dev-section">
-            <div class="label">QUICK_RESOURCE_INJECTION</div>
-            <div class="dev-grid">
-                <button class="dev-btn" onclick="state.data += 1e3">+1K</button>
-                <button class="dev-btn" onclick="state.data += 1e6">+1M</button>
-                <button class="dev-btn" onclick="state.data += 1e9">+1B</button>
-                <button class="dev-btn" onclick="state.data += 1e12">+1T</button>
+        <div class="dev-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#888; font-size:12px;">SERVER STATUS: <span style="color:var(--online)">CONNECTED</span></span>
+                <span id="ping-display" style="color:var(--dev); font-size:12px;">PING: 24ms</span>
             </div>
         </div>
 
-        <div class="dev-section">
-            <div class="label">PRESTIGE_LEVELS</div>
-            <div class="dev-grid">
-                <button class="dev-btn" onclick="state.prestigeMult = 1">Set x1</button>
-                <button class="dev-btn" onclick="state.prestigeMult *= 10">Mult x10</button>
-                <button class="dev-btn" onclick="state.prestigeMult *= 100">Mult x100</button>
-                <button class="dev-btn" onclick="state.prestigeMult = 999999">MAX_MULT</button>
-            </div>
+        <div class="dev-card">
+            <label style="color:var(--alert); font-size:12px; font-weight:bold;">GLOBAL BROADCAST</label>
+            <input type="text" id="broadcast-msg" class="dev-input" placeholder="Alert all connected players...">
+            <button onclick="sendBroadcast()" style="padding:12px; background:var(--alert); border:none; border-radius:8px; width:100%; font-weight:bold; cursor:pointer;">EMIT SIGNAL</button>
         </div>
 
-        <div class="dev-section">
-            <div class="label">VISUAL_DEBUG</div>
-            <div class="dev-grid">
-                <button class="dev-btn" onclick="document.body.style.filter='invert(1)'">Invert</button>
-                <button class="dev-btn" onclick="document.body.style.filter='grayscale(1)'">Grayscale</button>
-                <button class="dev-btn" onclick="document.body.style.filter='hue-rotate(90deg)'">Hue Shift</button>
-                <button class="dev-btn" onclick="document.body.style.filter='none'">Reset FX</button>
-                <button class="dev-btn" onclick="toggleGlow()">Toggle Glow</button>
-                <button class="dev-btn" onclick="toggleText()">Toggle UI</button>
-            </div>
+        <div class="dev-card">
+            <button onclick="state.data += 1e15; updateUI()" class="dev-input" style="cursor:pointer; border-color:var(--accent); color:var(--accent);">INJECT 1 QUADRILLION ENERGY</button>
+            <button onclick="document.getElementById('dev-menu').style.display='none'" style="width:100%; padding:10px; background:transparent; border:1px solid #444; color:#666; cursor:pointer; border-radius:8px;">CLOSE COMMAND</button>
         </div>
-
-        <div class="dev-section">
-            <div class="label">TIME_WARP</div>
-            <div class="dev-grid">
-                <button class="dev-btn" onclick="timeJump(60)">+1 Min</button>
-                <button class="dev-btn" onclick="timeJump(3600)">+1 Hour</button>
-                <button class="dev-btn" onclick="timeJump(86400)">+1 Day</button>
-                <button class="dev-btn" onclick="timeJump(31536000)">+1 Year</button>
-            </div>
-        </div>
-
-        <div class="dev-section">
-            <div class="label">UPGRADE_HACKS</div>
-            <div class="dev-grid">
-                <button class="dev-btn" onclick="godMode = !godMode">Free Items</button>
-                <button class="dev-btn" onclick="state.upgrades.forEach(u=>u.count += 10)">Add 10 Lvls</button>
-                <button class="dev-btn" onclick="state.upgrades.forEach(u=>u.count += 100)">Add 100 Lvls</button>
-                <button class="dev-btn" onclick="state.upgrades.forEach(u=>u.count = 0)">Reset Lvls</button>
-            </div>
-        </div>
-
-        <div class="dev-section">
-            <div class="label">CORE_PHYSICS</div>
-            <div class="dev-grid">
-                <button class="dev-btn" onclick="node.style.borderRadius='0'">Square Core</button>
-                <button class="dev-btn" onclick="node.style.borderRadius='50%'">Circle Core</button>
-                <button class="dev-btn" onclick="node.style.transform='rotate(45deg)'">Rotate</button>
-                <button class="dev-btn" onclick="node.style.animation='none'">Stop Anim</button>
-            </div>
-        </div>
-
-        <button onclick="document.getElementById('dev-menu').style.display='none'" style="width:100%; padding:10px; background:var(--dev); border:none; color:#000; font-weight:bold; margin-top:20px;">EXIT_TERMINAL</button>
     </div>
 
 <script>
     let state = {
-        data: 0, prestigeMult: 1,
-        upgrades: [
-            { name: 'Synapse Bolt', cost: 15, dps: 1, count: 0 },
-            { name: 'Prism Array', cost: 150, dps: 12, count: 0 },
-            { name: 'Void Pulse', cost: 2000, dps: 85, count: 0 },
-            { name: 'Nova Core', cost: 25000, dps: 450, count: 0 }
-        ]
+        data: 0,
+        upgradeLevels: new Array(1000).fill(0),
+        broadcast: "System Online. Welcome, Architect Carson Kirkpatrick."
     };
-    let godMode = false;
+
+    const upgrades = Array.from({length: 1000}, (_, i) => ({
+        name: `Module ${i+1}`,
+        cost: Math.floor(15 * Math.pow(1.5, i)),
+        dps: Math.floor(1.5 * Math.pow(1.45, i))
+    }));
 
     function handleInput(e) {
         if (e.cancelable) e.preventDefault();
-        const pwr = (1 + Math.floor(calculateDPS() * 0.1)) * state.prestigeMult;
-        state.data += pwr;
+        state.data += 1 + (calculateDPS() * 0.05);
         updateUI();
     }
 
-    document.getElementById('node').addEventListener('mousedown', handleInput);
-    document.getElementById('node').addEventListener('touchstart', handleInput, {passive: false});
-
-    function calculateDPS() { return state.upgrades.reduce((sum, u) => sum + (u.dps * u.count), 0) * state.prestigeMult; }
-
-    function updateUI() {
-        document.getElementById('data-display').innerText = Math.floor(state.data).toLocaleString();
-        document.getElementById('dps-display').innerText = calculateDPS().toLocaleString() + ' /s';
-        document.getElementById('mult-display').innerText = state.prestigeMult;
-        const container = document.getElementById('shop-container');
-        container.innerHTML = '';
-        state.upgrades.forEach((u, i) => {
-            const card = document.createElement('div');
-            const canAfford = state.data >= u.cost || godMode;
-            card.className = `upgrade-card ${canAfford ? '' : 'disabled'}`;
-            card.innerHTML = `<strong>${u.name} (Lv.${u.count})</strong><br>${godMode ? '0' : u.cost.toLocaleString()}`;
-            card.onclick = () => { if(canAfford) { if(!godMode) state.data -= u.cost; u.count++; u.cost = Math.ceil(u.cost * 1.3); updateUI(); } };
-            container.appendChild(card);
-        });
+    function calculateDPS() {
+        return state.upgradeLevels.reduce((sum, lvl, i) => sum + (lvl * upgrades[i].dps), 0);
     }
 
-    function openDev() { if(prompt("PASSKEY:") === "2026") document.getElementById('dev-menu').style.display = 'block'; }
-    function timeJump(sec) { state.data += calculateDPS() * sec; updateUI(); }
-    function toggleGlow() { const n = document.getElementById('node'); n.style.boxShadow = n.style.boxShadow ? '' : '0 0 50px var(--accent)'; }
-    function toggleText() { document.querySelectorAll('.label').forEach(l => l.style.display = l.style.display === 'none' ? 'block' : 'none'); }
+    function updateUI() {
+        document.getElementById('energy-display').innerText = Math.floor(state.data).toLocaleString();
+        document.getElementById('dps-display').innerText = Math.floor(calculateDPS()).toLocaleString();
+        document.getElementById('ticker').innerText = state.broadcast;
 
+        const shop = document.getElementById('shop-container');
+        shop.innerHTML = '';
+        let count = 0;
+        for(let i=0; i<1000; i++) {
+            const u = upgrades[i];
+            const lvl = state.upgradeLevels[i];
+            const cost = Math.floor(u.cost * Math.pow(1.15, lvl));
+            if(state.data >= u.cost * 0.5 || lvl > 0) {
+                const card = document.createElement('div');
+                card.className = `upgrade-card ${state.data < cost ? 'disabled' : ''}`;
+                card.innerHTML = `<strong>${u.name} (Lv.${lvl})</strong><br>${cost.toLocaleString()}`;
+                card.onclick = () => { if(state.data >= cost) { state.data -= cost; state.upgradeLevels[i]++; updateUI(); save(); } };
+                shop.appendChild(card);
+                count++;
+            }
+            if(count > 8) break;
+        }
+    }
+
+    function sendBroadcast() {
+        const msg = document.getElementById('broadcast-msg').value;
+        if(msg) {
+            state.broadcast = "GLOBAL ALERT: " + msg + " — (Dev: Carson)";
+            updateUI();
+            alert("Signal Broadcasted to Global Ticker");
+        }
+    }
+
+    // Ping Simulator
+    setInterval(() => {
+        if(document.getElementById('dev-menu').style.display === 'block') {
+            document.getElementById('ping-display').innerText = "PING: " + Math.floor(Math.random() * 20 + 15) + "ms";
+        }
+    }, 2000);
+
+    function openDev() { if(prompt("ACCESS KEY:") === "2026") document.getElementById('dev-menu').style.display = 'block'; }
+    function save() { localStorage.setItem('aura_v6_save', JSON.stringify(state)); }
+    function load() {
+        const s = localStorage.getItem('aura_v6_save');
+        if(s) state = JSON.parse(s);
+    }
+
+    document.getElementById('node').addEventListener('mousedown', handleInput);
+    document.getElementById('node').addEventListener('touchstart', handleInput, {passive:false});
+    
     setInterval(() => { state.data += calculateDPS() / 10; updateUI(); }, 100);
+    load();
     updateUI();
 </script>
 </body>
